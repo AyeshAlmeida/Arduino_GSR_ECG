@@ -4,6 +4,16 @@ import processing.serial.*;
 //setting up a port
 Serial port;
 
+//graph variables
+float x,gsrX;
+float mapStart = 0;
+float mapEnd = 240;
+float gMin = 0;
+float gMax = 1023;
+int xPos = 50;
+float preX = 50;
+float preY = 290;
+
 void setup(){
   
   //create a serial-port object instance
@@ -48,17 +58,33 @@ void setup(){
 
 void draw(){
  //everything happens here
+ serialEvent();
 }
 
 void serialEvent(){
   
   //taking the input
   String input = port.readStringUntil('\n');
-  input = trim(input);//removing the whitespace characters
-  float[] values = float(split(input,','));
   
-  println(values);
+  if(input != null){
+    input = trim(input);//removing the whitespace characters
+    float[] values = float(split(input,','));
   
+    x = values[0];
+    
+    gsrX = map(x,gMin,gMax,mapStart,mapEnd);//map the values unto our needed range
+    
+    stroke(255,0,0);
+    line(preX,preY,xPos,100+gsrX);//drawing the line
+    
+    //setting previous values to next iteration
+    preX = xPos;
+    preY = 100+gsrX;
+    
+    xPos++;
+    
+    println(100+gsrX);
+  }
   
 
 } 
