@@ -1,7 +1,16 @@
+import controlP5.*;
 import processing.serial.*;
 
+//adding button
+ControlP5 cp5;
+
+int myColor = color(255);
+
+//setting the mode
+int Mode = 0;
+
 //creating a table
-Table table;
+Table table,revtable;
 
 int rownumber = 0;
 
@@ -29,6 +38,7 @@ float preY = 220;
 
 void setup(){
   
+  cp5 = new ControlP5(this);
   //create a serial-port object instance
   port = new Serial(this,Serial.list()[1],19200);
   
@@ -51,13 +61,21 @@ void setup(){
   table.addColumn("X-Position");
   table.addColumn("Current_Reading");
   table.addColumn("Time_Stamp");
-
+  
   Grid();
 }
 
 void draw(){
  //everything happens here
- serialEvent();
+ 
+ if(Mode == 1 ){
+   serialEvent();
+   println(Mode);
+ }else{
+   Replaypressed();
+   println(Mode);
+ }
+ 
 }
 
 void serialEvent(){
@@ -113,7 +131,7 @@ void serialEvent(){
     
     //save the table
     saveTable(table,"./data/"+date+".csv");
-    println(100+gsrX);
+    
   }
   
 
@@ -152,9 +170,64 @@ void Grid(){
   /*Adding a title*/
   textSize(32);
   text("Electrocardiogram",50,636);
+  
+  /*CREATING A BUTTON*/
+  cp5.addButton("Replay")
+      .setValue(0)
+      .setPosition(1020,50)
+      .setSize(70,30)
+      ;
+
 }
 
+//mouse click event
 void mouseClicked(){
   stroke(0,0,255);
   line(mouseX,mouseY-20,mouseX,mouseY);
+}
+
+void Replay(){
+  if(Mode==0)
+    Mode = 1;
+  else
+    Mode = 0;
+}
+
+public void Replaypressed(){
+  println("We are going to replay the content.");
+  int xx;
+  float gsrXX,prevXX,prevYY,XX;
+  prevXX = 50;
+  prevYY = 220;
+  revtable = new Table();
+  revtable = loadTable("./data/2016_5_2.csv","header");
+  
+  //looping through .csv file
+  for(TableRow row : revtable.rows()){
+    
+    XX = row.getFloat("Current_Reading");
+    xx = row.getInt("X-Position")+50;
+    
+    gsrXX = map(XX,gMin,gMax,mapStart,mapEnd);//map the values unto our needed range
+    
+    stroke(255,0,0);
+    line(prevXX,prevYY,xx,100+gsrXX);//drawing the line
+    prevXX = xx;
+    prevYY = 100+gsrXX;
+    println(gsrXX);
+    delay(20);
+    if(xx == 950){
+      //Grid();
+      delay(50);
+      xx = 50;
+      prevXX = 50;
+      background(0);
+      stroke(0);
+      Grid();
+      
+    }
+  }
+  
+  
+  
 }
