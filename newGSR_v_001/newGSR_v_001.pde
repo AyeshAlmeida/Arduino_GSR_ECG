@@ -26,7 +26,7 @@ void setup(){
   printArray(Serial.list());
   
   //create a Serial-port object
-  myport = new Serial(this,Serial.list()[1],19200);
+  myport = new Serial(this,"/dev/ttyUSB2",19200);
   background(0);
   
   /*creating a table*/
@@ -77,7 +77,7 @@ void serialEvent(){
     newRow.setFloat("Reading", x);
     
     /*Save the Table*/ 
-    saveTable(table, "data/new.csv");
+    saveTable(table, "./data/new.csv");
   
     if (xPos >= width) {
         xPos = 0;

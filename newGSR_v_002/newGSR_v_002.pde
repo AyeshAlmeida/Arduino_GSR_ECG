@@ -36,7 +36,7 @@ float preY = 220;
 void setup(){
   
   //create a serial-port object instance
-  port = new Serial(this,Serial.list()[1],19200);
+  port = new Serial(this,"/dev/ttyUSB2",19200);
   
   size(1100,650);//creating the basic GUI
   background(0);//setting background color
@@ -63,15 +63,7 @@ void setup(){
 
 void draw(){
  //everything happens here
- 
- if(Mode == 1 ){
-   serialEvent();
-   println(Mode);
- }else{
-   Replaypressed();
-   println(Mode);
- }
- 
+ serialEvent(); 
 }
 
 void serialEvent(){
@@ -173,50 +165,4 @@ void Grid(){
 void mouseClicked(){
   stroke(0,0,255);
   line(mouseX,mouseY-20,mouseX,mouseY);
-}
-
-void Replay(){
-  if(Mode==0)
-    Mode = 1;
-  else
-    Mode = 0;
-}
-
-public void Replaypressed(){
-  println("We are going to replay the content.");
-  int xx;
-  float gsrXX,prevXX,prevYY,XX;
-  prevXX = 50;
-  prevYY = 220;
-  revtable = new Table();
-  revtable = loadTable("./data/2016_5_2.csv","header");
-  
-  //looping through .csv file
-  for(TableRow row : revtable.rows()){
-    
-    XX = row.getFloat("Current_Reading");
-    xx = row.getInt("X-Position")+50;
-    
-    gsrXX = map(XX,gMin,gMax,mapStart,mapEnd);//map the values unto our needed range
-    
-    stroke(255,0,0);
-    line(prevXX,prevYY,xx,100+gsrXX);//drawing the line
-    prevXX = xx;
-    prevYY = 100+gsrXX;
-    println(gsrXX);
-    delay(20);
-    if(xx == 950){
-      //Grid();
-      delay(50);
-      xx = 50;
-      prevXX = 50;
-      background(0);
-      stroke(0);
-      Grid();
-      
-    }
-  }
-  
-  
-  
 }
