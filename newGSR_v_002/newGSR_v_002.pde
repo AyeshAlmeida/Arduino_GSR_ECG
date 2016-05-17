@@ -1,8 +1,5 @@
-import controlP5.*;
 import processing.serial.*;
 
-//adding button
-ControlP5 cp5;
 
 int myColor = color(255);
 
@@ -38,7 +35,6 @@ float preY = 220;
 
 void setup(){
   
-  cp5 = new ControlP5(this);
   //create a serial-port object instance
   port = new Serial(this,Serial.list()[1],19200);
   
@@ -171,13 +167,6 @@ void Grid(){
   textSize(32);
   text("Electrocardiogram",50,636);
   
-  /*CREATING A BUTTON*/
-  cp5.addButton("Replay")
-      .setValue(0)
-      .setPosition(1020,50)
-      .setSize(70,30)
-      ;
-
 }
 
 //mouse click event
